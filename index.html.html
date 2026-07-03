@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>🏀 CB Parets · Control Estiu 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f0f4f8;min-height:100vh}
+#login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;background:linear-gradient(160deg,#1A3A5C 0%,#2E6DA4 100%)}
+.pin-logo{font-size:64px;margin-bottom:8px;text-align:center}
+.pin-title{font-size:26px;font-weight:700;color:#fff;text-align:center;margin-bottom:4px}
+.pin-sub{font-size:14px;color:#B5D4F4;text-align:center;margin-bottom:32px}
+.pin-dots{display:flex;gap:14px;justify-content:center;margin-bottom:28px}
+.pin-dot{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);background:transparent;transition:all .15s}
+.pin-dot.filled{background:#fff;border-color:#fff}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;width:100%}
+.pin-key{padding:18px;border:1.5px solid rgba(255,255,255,.25);border-radius:14px;font-size:22px;font-weight:600;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;text-align:center;transition:all .12s;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.pin-key:active{background:rgba(255,255,255,.35);transform:scale(.93)}
+.pin-key.ok{background:#fff;color:#1A3A5C;border-color:#fff}
+.pin-error{color:#FAC775;font-size:13px;text-align:center;margin-top:14px;min-height:20px;font-weight:500}
+#app-screen{max-width:480px;margin:0 auto;background:#f0f4f8;min-height:100vh;display:none}
+.app-header{background:linear-gradient(135deg,#1A3A5C,#2E6DA4);padding:14px 16px 10px;display:flex;align-items:center;gap:10px}
+.player-name{font-size:16px;font-weight:700;color:#fff;flex:1}
+.logout-btn{padding:5px 12px;border:1.5px solid rgba(255,255,255,.4);border-radius:8px;background:transparent;color:#fff;font-size:12px;cursor:pointer;font-family:inherit}
+.nav{display:flex;gap:6px;padding:10px 12px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10}
+.nav-btn{flex:1;padding:7px 4px;font-size:11px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;background:transparent;color:#6b7280;font-family:inherit;text-align:center;transition:all .15s}
+.nav-btn.active{background:#185FA5;border-color:#185FA5;color:#fff;font-weight:700}
+.tab-content{padding:12px;display:none}
+.tab-content.active{display:block}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.check-item{border:1.5px solid #e5e7eb;border-radius:12px;padding:14px 8px;cursor:pointer;text-align:center;font-size:12px;color:#6b7280;transition:all .15s;-webkit-tap-highlight-color:transparent;user-select:none}
+.check-item.done{background:#EAF3DE;border-color:#639922;color:#27500A;font-weight:700}
+.emo{font-size:26px;display:block;margin-bottom:5px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:all .15s}
+.btn-primary{background:#185FA5;color:#fff}
+.btn-success{background:#27500A;color:#fff}
+.prog-bar{height:8px;background:#f0f4f8;border-radius:4px;overflow:hidden;margin:8px 0}
+.prog-fill{height:100%;border-radius:4px;background:#185FA5;transition:width .3s}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+.badge-blue{background:#E6F1FB;color:#0C447C}
+.badge-green{background:#EAF3DE;color:#27500A}
+.badge-amber{background:#FAEEDA;color:#633806}
+.badge-purple{background:#EEEDFE;color:#3C3489}
+.rank-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f4f8}
+.rank-item:last-child{border-bottom:none}
+.rank-item.me{background:#EDF5FF;border-radius:10px;padding:9px 10px;margin:0 -10px}
+.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.challenge-item{border:1.5px solid #e5e7eb;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.challenge-item.done{background:#EAF3DE;border-color:#639922}
+.week-nav{display:flex;align-items:center;gap:8px}
+.week-nav button{width:30px;height:30px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-box{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;text-align:center}
+.stat-label{font-size:11px;color:#6b7280;margin-bottom:4px}
+.stat-val{font-size:22px;font-weight:700;color:#1A3A5C}
+.coach-panel{background:#1A3A5C;border-radius:14px;padding:16px;margin-bottom:12px}
+.coach-panel h3{color:#B5D4F4;font-size:12px;font-weight:600;margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase}
+.pin-table{width:100%;border-collapse:collapse}
+.pin-table th{padding:6px 10px;color:#B5D4F4;font-size:12px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.15);text-align:left}
+.pin-table td{padding:7px 10px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.08)}
+.pin-table td:first-child{color:#fff;font-weight:500}
+.pin-table td:last-child{color:#FAC775;font-weight:700;font-family:monospace;font-size:15px;letter-spacing:2px}
+.pin-table tr:last-child td{border-bottom:none}
+.copy-hint{font-size:11px;color:rgba(255,255,255,.4);text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="pin-logo">&#127936;</div>
+  <div class="pin-title">CB Parets &middot; Estiu 2026</div>
+  <div class="pin-sub">Introdueix el teu PIN personal</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-keypad">
+    <button class="pin-key" onclick="pk('1')">1</button>
+    <button class="pin-key" onclick="pk('2')">2</button>
+    <button class="pin-key" onclick="pk('3')">3</button>
+    <button class="pin-key" onclick="pk('4')">4</button>
+    <button class="pin-key" onclick="pk('5')">5</button>
+    <button class="pin-key" onclick="pk('6')">6</button>
+    <button class="pin-key" onclick="pk('7')">7</button>
+    <button class="pin-key" onclick="pk('8')">8</button>
+    <button class="pin-key" onclick="pk('9')">9</button>
+    <button class="pin-key" onclick="pk('C')" style="font-size:16px">&#10005;</button>
+    <button class="pin-key" onclick="pk('0')">0</button>
+    <button class="pin-key ok" onclick="pk('OK')">OK</button>
+  </div>
+  <div class="pin-error" id="pin-error"></div>
+</div>
+
+<div id="app-screen">
+  <div class="app-header">
+    <div>
+      <div style="font-size:11px;color:#B5D4F4;margin-bottom:2px">Connectat com</div>
+      <div class="player-name" id="player-name-display">--</div>
+    </div>
+    <div style="flex:1"></div>
+    <button class="logout-btn" onclick="logout()">Sortir</button>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" id="nav-registre" onclick="showTab('registre')">Registre</button>
+    <button class="nav-btn" id="nav-ranking" onclick="showTab('ranking')">Ranquing</button>
+    <button class="nav-btn" id="nav-reptes" onclick="showTab('reptes')">Reptes</button>
+    <button class="nav-btn" id="nav-resum" onclick="showTab('resum')">Resum</button>
+  </nav>
+
+  <div id="tab-registre" class="tab-content active">
+    <div class="card" style="margin-top:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:#1A3A5C">Entrenaments del dia</div>
+        <div class="week-nav">
+          <button onclick="changeWeek(-1)">&#8249;</button>
+          <span style="font-size:12px;color:#6b7280;white-space:nowrap" id="week-label">S1</span>
+          <button onclick="changeWeek(1)">&#8250;</button>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#2E6DA4;font-weight:600;margin-bottom:6px" id="week-dates"></div>
+      <div class="check-grid" id="check-grid"></div>
+      <button class="btn btn-primary" id="confirm-btn" onclick="registrar()" style="margin-top:4px">Confirmar entrenaments</button>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div><div class="stat-label">Progres setmanal</div><div style="font-size:22px;font-weight:700;color:#1A3A5C" id="prog-num">0 / 4</div></div>
+        <span class="badge badge-blue" id="prog-badge">Inici</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div style="font-size:12px;color:#6b7280" id="prog-msg"></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-label">Punts</div><div class="stat-val" id="s-pts" style="color:#185FA5">0</div></div>
+      <div class="stat-box"><div class="stat-label">Sessions</div><div class="stat-val" id="s-sess">0</div></div>
+      <div class="stat-box"><div class="stat-label">Reptes</div><div class="stat-val" id="s-reps" style="color:#639922">0</div></div>
+    </div>
+  </div>
+
+  <div id="tab-ranking" class="tab-content">
+    <div class="card" style="margin-top:12px">
+      <div style="font-size:13px;font-weight:700;color:#1A3A5C;margin-bottom:12px">Classificacio d'estiu</div>
+      <div id="ranking-list"></div>
+    </div>
+  </div>
+
+  <div id="tab-reptes" class="tab-content">
+    <div style="font-size:12px;color:#6b7280;text-align:center;padding:8px 0 4px">Els teus reptes personals</div>
+    <div id="reptes-list" style="margin-top:8px"></div>
+  </div>
+
+  <div id="tab-resum" class="tab-content">
+    <div style="font-size:12px;color:#6b7280;text-align:center;padding:8px 0 4px" id="resum-sub">Resum del grup</div>
+    <div id="coach-panel" style="display:none">
+      <div class="coach-panel">
+        <h3>Panel Entrenador - PINs dels Jugadors</h3>
+        <table class="pin-table">
+          <tr><th>Jugador</th><th>PIN</th></tr>
+          <tr><td>Biel C</td><td>1842</td></tr>
+          <tr><td>Txema</td><td>2753</td></tr>
+          <tr><td>Pep P</td><td>3614</td></tr>
+          <tr><td>Albert C</td><td>4125</td></tr>
+          <tr><td>Marti</td><td>5236</td></tr>
+          <tr><td>Marko K</td><td>6347</td></tr>
+          <tr><td>Hugo R</td><td>7418</td></tr>
+          <tr><td>Biel P</td><td>8529</td></tr>
+          <tr><td>Adria L</td><td>9130</td></tr>
+          <tr><td>Eloi</td><td>1357</td></tr>
+          <tr><td>Pau AM</td><td>2468</td></tr>
+          <tr><td>Angel</td><td>3579</td></tr>
+          <tr><td>Alvaro</td><td>4680</td></tr>
+        </table>
+        <div class="copy-hint">Envia a cada jugador NOMES el seu PIN</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-label">Sessions totals</div><div class="stat-val" id="r-total">0</div></div>
+      <div class="stat-box"><div class="stat-label">Assistencia</div><div class="stat-val" id="r-pct">0%</div></div>
+      <div class="stat-box"><div class="stat-label">Lider</div><div style="font-size:14px;font-weight:700;color:#1A3A5C" id="r-leader">--</div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;color:#1A3A5C;margin-bottom:10px">Sessions per jugador</div>
+      <div id="stat-bars"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var PLAYERS=[
+  {name:'Biel C',pin:'1842',av:'BC',bg:'#E6F1FB',col:'#0C447C'},
+  {name:'Txema',pin:'2753',av:'TX',bg:'#E1F5EE',col:'#085041'},
+  {name:'Pep P',pin:'3614',av:'PP',bg:'#FAECE7',col:'#712B13'},
+  {name:'Albert C',pin:'4125',av:'AC',bg:'#FBEAF0',col:'#72243E'},
+  {name:'Marti',pin:'5236',av:'MA',bg:'#EEEDFE',col:'#3C3489'},
+  {name:'Marko K',pin:'6347',av:'MK',bg:'#EAF3DE',col:'#27500A'},
+  {name:'Hugo R',pin:'7418',av:'HR',bg:'#FAEEDA',col:'#633806'},
+  {name:'Biel P',pin:'8529',av:'BP',bg:'#FCEBEB',col:'#791F1F'},
+  {name:'Adria L',pin:'9130',av:'AL',bg:'#E6F1FB',col:'#0C447C'},
+  {name:'Eloi',pin:'1357',av:'EL',bg:'#E1F5EE',col:'#085041'},
+  {name:'Pau AM',pin:'2468',av:'PA',bg:'#FAEEDA',col:'#633806'},
+  {name:'Angel',pin:'3579',av:'AN',bg:'#F1EFE8',col:'#444441'},
+  {name:'Alvaro',pin:'4680',av:'AV',bg:'#EEEDFE',col:'#3C3489'}
+];
+var COACH_PIN='0000';
+var WEEKS=[
+  {n:1,d:'27 jun - 3 jul'},{n:2,d:'4 - 10 jul'},{n:3,d:'11 - 17 jul'},
+  {n:4,d:'18 - 24 jul'},{n:5,d:'25 - 31 jul'},{n:6,d:'1 - 7 ago'},
+  {n:7,d:'8 - 14 ago'},{n:8,d:'15 - 21 ago'},{n:9,d:'22 - 28 ago'}
+];
+var ENTRENOS=[
+  {id:'cardio',label:'Cardio suau',icon:'&#127939;'},
+  {id:'forca',label:'Forca general',icon:'&#128170;'},
+  {id:'mobilitat',label:'Mobilitat & Core',icon:'&#129336;'},
+  {id:'tir',label:'Tir individual',icon:'&#127919;'}
+];
+var REPTES=[
+  {id:'r1',title:'Setmana perfecta',desc:'3+ sessions en una setmana',pts:15,icon:'&#11088;',check:function(s){return s.weeks.some(function(w){return wS(w)>=3;})}},
+  {id:'r2',title:'10 sessions',desc:'Acumula 10 sessions',pts:20,icon:'&#128170;',check:function(s){return tS(s)>=10;}},
+  {id:'r3',title:'20 sessions',desc:'El gran repte de l\'estiu',pts:50,icon:'&#127942;',check:function(s){return tS(s)>=20;}},
+  {id:'r4',title:'Tecnic de tir',desc:'8 sessions de tir individual',pts:25,icon:'&#127919;',check:function(s){return s.weeks.filter(function(w){return w.tir;}).length>=8;}},
+  {id:'r5',title:'Maquina de cor',desc:'8 sessions de cardio',pts:20,icon:'&#10084;',check:function(s){return s.weeks.filter(function(w){return w.cardio;}).length>=8;}},
+  {id:'r6',title:'Base solida',desc:'6 sessions de forca',pts:20,icon:'&#127947;',check:function(s){return s.weeks.filter(function(w){return w.forca;}).length>=6;}},
+  {id:'r7',title:'Constancia d\'or',desc:'Entrena 8 setmanes seguides',pts:40,icon:'&#129351;',check:function(s){return cW(s)>=8;}}
+];
+var DATA={};
+PLAYERS.forEach(function(p){DATA[p.pin]={weeks:Array(9).fill(null).map(function(){return {cardio:false,forca:false,mobilitat:false,tir:false};})};});
+var curPin=null,isCoach=false,curWeek=0,pinBuf='';
+function wS(w){return Object.values(w).filter(Boolean).length;}
+function tS(s){return s.weeks.reduce(function(a,w){return a+wS(w);},0);}
+function cW(s){var mx=0,c=0;s.weeks.forEach(function(w){if(wS(w)>0){c++;mx=Math.max(mx,c);}else c=0;});return mx;}
+function calcPts(s){var p=0;s.weeks.forEach(function(w){var n=wS(w);p+=n*5;if(n>=3)p+=10;if(n>=4)p+=10;});REPTES.forEach(function(r){if(r.check(s))p+=r.pts;});return p;}
+function getPlayer(pin){return PLAYERS.find(function(p){return p.pin===pin;});}
+function pk(k){
+  var err=document.getElementById('pin-error');
+  if(k==='C'){pinBuf='';dots();err.textContent='';return;}
+  if(k!=='OK'&&pinBuf.length>=4)return;
+  if(k!=='OK')pinBuf+=k;
+  dots();
+  var tryPin=pinBuf;
+  if(k==='OK'||tryPin.length===4){
+    var allPins=PLAYERS.map(function(p){return p.pin;}).concat([COACH_PIN]);
+    if(allPins.indexOf(tryPin)>=0){curPin=tryPin;isCoach=(tryPin===COACH_PIN);login();}
+    else if(tryPin.length===4){err.textContent='PIN incorrecte. Torna-ho a provar.';pinBuf='';dots();}
+  }
+}
+function dots(){for(var i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<pinBuf.length);}
+function login(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  if(isCoach){
+    document.getElementById('player-name-display').textContent='Entrenador';
+    document.getElementById('coach-panel').style.display='block';
+    document.getElementById('resum-sub').textContent='Resum complet del grup';
+  } else {
+    var pl=getPlayer(curPin);
+    document.getElementById('player-name-display').textContent=pl.name;
+    document.getElementById('coach-panel').style.display='none';
+  }
+  renderAll();
+}
+function logout(){
+  curPin=null;isCoach=false;pinBuf='';dots();
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app-screen').style.display='none';
+  document.getElementById('coach-panel').style.display='none';
+  document.getElementById('pin-error').textContent='';
+}
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+}
+function changeWeek(d){curWeek=Math.max(0,Math.min(8,curWeek+d));renderCheckGrid();updateProgress();}
+function renderAll(){renderCheckGrid();updateProgress();updateStatCards();renderRanking();renderReptes();renderResum();}
+function renderCheckGrid(){
+  var wl=document.getElementById('week-label'),wd=document.getElementById('week-dates'),cg=document.getElementById('check-grid'),btn=document.getElementById('confirm-btn');
+  if(isCoach){wl.textContent='';wd.textContent='';cg.innerHTML='<p style="font-size:13px;color:#6b7280;grid-column:1/-1;text-align:center;padding:16px">Accedeix al tab Resum per veure el grup.</p>';btn.style.display='none';return;}
+  btn.style.display='flex';
+  wl.textContent='Setmana '+WEEKS[curWeek].n;
+  wd.textContent=WEEKS[curWeek].d;
+  var s=DATA[curPin],w=s.weeks[curWeek];
+  cg.innerHTML=ENTRENOS.map(function(e){return '<div class="check-item'+(w[e.id]?' done':'')+'" onclick="toggle(\''+e.id+'\')"><span class="emo">'+e.icon+'</span>'+e.label+(w[e.id]?' V':'')+'</div>';}).join('');
+}
+function toggle(id){if(isCoach)return;DATA[curPin].weeks[curWeek][id]=!DATA[curPin].weeks[curWeek][id];renderCheckGrid();updateProgress();updateStatCards();}
+function registrar(){
+  if(isCoach)return;
+  var btn=document.getElementById('confirm-btn');
+  btn.textContent='Registrat!';btn.className='btn btn-success';
+  renderRanking();renderReptes();renderResum();updateStatCards();
+  setTimeout(function(){btn.textContent='Confirmar entrenaments';btn.className='btn btn-primary';},1800);
+}
+function updateProgress(){
+  if(isCoach)return;
+  var s=DATA[curPin],n=wS(s.weeks[curWeek]);
+  document.getElementById('prog-num').textContent=n+' / 4';
+  document.getElementById('prog-fill').style.width=Math.round(n/4*100)+'%';
+  var tags=['Inici','En marxa!','Be!','Molt be!','Setmana perfecta!'];
+  var cls=['badge-blue','badge-blue','badge-green','badge-amber','badge-purple'];
+  var el=document.getElementById('prog-badge');el.textContent=tags[n];el.className='badge '+cls[n];
+  var msgs=['Completa 3 dies per aconseguir el bonus de +10 pts!','Bon inici! Continua.','Genial! Un dia mes i et cau el bonus.','Bonus de +10 pts guanyats!','Setmana completa! +20 pts bonus!'];
+  document.getElementById('prog-msg').textContent=msgs[n];
+}
+function updateStatCards(){
+  if(isCoach)return;
+  var s=DATA[curPin];
+  document.getElementById('s-pts').textContent=calcPts(s);
+  document.getElementById('s-sess').textContent=tS(s);
+  document.getElementById('s-reps').textContent=REPTES.filter(function(r){return r.check(s);}).length;
+}
+function renderRanking(){
+  var sorted=PLAYERS.slice().sort(function(a,b){return calcPts(DATA[b.pin])-calcPts(DATA[a.pin]);});
+  var medals=['1r','2n','3r'];
+  document.getElementById('ranking-list').innerHTML=sorted.map(function(pl,i){
+    var pts=calcPts(DATA[pl.pin]),tot=tS(DATA[pl.pin]),isMe=pl.pin===curPin;
+    return '<div class="rank-item'+(isMe?' me':'')+'"><div style="font-size:14px;width:28px;text-align:center;color:#6b7280;font-weight:600">'+(i<3?medals[i]:i+1)+'</div><div class="avatar" style="background:'+pl.bg+';color:'+pl.col+'">'+pl.av+'</div><div style="flex:1"><div style="font-size:14px;font-weight:'+(isMe?700:500)+';color:'+(isMe?'#185FA5':'#111')+'">'+pl.name+(isMe?' (tu)':'')+'</div><div style="font-size:11px;color:#9ca3af">'+tot+' sessions</div></div><div style="font-size:20px;font-weight:700;color:#185FA5">'+pts+'<span style="font-size:11px;color:#9ca3af;font-weight:400"> pts</span></div></div>';
+  }).join('');
+}
+function renderReptes(){
+  if(isCoach){document.getElementById('reptes-list').innerHTML='<div class="card" style="text-align:center;font-size:13px;color:#6b7280">Els reptes es mostren per a cada jugador.</div>';return;}
+  var s=DATA[curPin];
+  document.getElementById('reptes-list').innerHTML=REPTES.map(function(r){
+    var done=r.check(s);
+    return '<div class="challenge-item'+(done?' done':'')+'"><div style="font-size:26px">'+r.icon+'</div><div style="flex:1"><div style="font-size:14px;font-weight:700;color:'+(done?'#27500A':'#111')+'">'+r.title+'</div><div style="font-size:11px;color:#6b7280;margin-top:2px">'+r.desc+'</div></div><span class="badge '+(done?'badge-green':'badge-blue')+'">'+(done?'+ ':'+')+''+r.pts+' pts</span></div>';
+  }).join('');
+}
+function renderResum(){
+  var tot=0,leader='--',leaderS=0;
+  PLAYERS.forEach(function(pl){var s=tS(DATA[pl.pin]);tot+=s;if(s>leaderS){leaderS=s;leader=pl.name.split(' ')[0];}});
+  document.getElementById('r-total').textContent=tot;
+  document.getElementById('r-pct').textContent=Math.round(tot/(PLAYERS.length*9*3)*100)+'%';
+  document.getElementById('r-leader').textContent=leader;
+  var sorted=PLAYERS.slice().sort(function(a,b){return tS(DATA[b.pin])-tS(DATA[a.pin]);});
+  document.getElementById('stat-bars').innerHTML=sorted.map(function(pl){
+    var s=tS(DATA[pl.pin]),w=Math.round(s/27*100);
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><div style="font-size:12px;color:#6b7280;width:52px;text-align:right;flex-shrink:0">'+pl.name.split(' ')[0]+'</div><div style="flex:1;height:8px;background:#f0f4f8;border-radius:4px;overflow:hidden"><div style="width:'+w+'%;height:100%;background:'+pl.col+';border-radius:4px"></div></div><div style="font-size:12px;font-weight:700;width:18px;color:#1A3A5C">'+s+'</div></div>';
+  }).join('');
+}
+</script>
+</body>
+</html>
